@@ -35,16 +35,16 @@ class _MyAppState  extends  State<MyApp> {
     return MaterialApp(
       title: title,
       home: Scaffold(
-        appBar: AppBar(
-          title: Text(title),
-        ),
-        body: RefreshIndicator(
-          onRefresh: _handleRefresh,
-          child: ListView(
-            controller: _scrollController,
-            children: _buildList(),
+          appBar: AppBar(
+            title: Text(title),
           ),
-        )
+          body: RefreshIndicator(
+            onRefresh: _handleRefresh,
+            child: ListView(
+              controller: _scrollController,
+              children: _buildList(),
+            ),
+          )
       ),
 
     );
@@ -57,13 +57,13 @@ class _MyAppState  extends  State<MyApp> {
     return null;
   }
 
-   _loadData() async{
+  _loadData() async{
     await Future.delayed(Duration(seconds: 2));
     setState(() {
       //复制cityNames
-     List<String> list = List<String>.from(cityNames);
-     list.addAll(cityNames);
-     cityNames = list;
+      List<String> list = List<String>.from(cityNames);
+      list.addAll(cityNames);
+      cityNames = list;
     });
   }
 
@@ -72,15 +72,15 @@ class _MyAppState  extends  State<MyApp> {
   }
 
   Widget _item(String city){
-      return Container(
-          height: 80,
-          margin: EdgeInsets.only(bottom: 5),
-          alignment: Alignment.center,
-          decoration: BoxDecoration(color: Colors.teal),
-          child: Text(
-            city,
-            style: TextStyle(color: Colors.white, fontSize: 20),
-          ),
+    return Container(
+      height: 80,
+      margin: EdgeInsets.only(bottom: 5),
+      alignment: Alignment.center,
+      decoration: BoxDecoration(color: Colors.teal),
+      child: Text(
+        city,
+        style: TextStyle(color: Colors.white, fontSize: 20),
+      ),
     );
   }
 }
