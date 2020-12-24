@@ -1,7 +1,12 @@
 
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:flutter_trip/dao/home_dao.dart';
+import 'package:flutter_trip/model/common_model.dart';
+import 'package:flutter_trip/model/home_model.dart';
+import 'package:flutter_trip/widget/local_nav.dart';
 const APPBAR_SCROLL_OFFSET = 100;
 
 class HomePage extends StatefulWidget{
@@ -17,6 +22,14 @@ class _HomePageState extends  State<HomePage>{
   ];
 
   double appBarAlpha = 0;
+  List<CommonModel> localNavList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+  }
+
 
   _onScroll(offset){
     double alpha = offset/APPBAR_SCROLL_OFFSET;
@@ -32,9 +45,37 @@ class _HomePageState extends  State<HomePage>{
 
   }
 
+  //http请求，获取首页数据
+  loadData() async{
+    //http请求方式一：
+    // HomeDao.fetch().then((result){
+    //   setState(() {
+    //     //json.encode方法在dart:convert里面所以需要引入
+    //     resultString = json.encode(result);
+    //   });
+    // }).catchError((e){
+    //   setState(() {
+    //     resultString = e.toString();
+    //   });
+    // });
+    try{
+      HomeModel model = await HomeDao.fetch();
+      setState(() {
+        localNavList = model.localNavList;
+        //将object转为字符串
+       // resultString = json.encode(model.config);
+      });
+    }catch(e){
+      print(e);
+    }
+
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xfff2f2f2),
       //可使元素叠加,前面的元素在下面,后面的元素在上面
         body: Stack(
           children: <Widget>[
@@ -66,10 +107,14 @@ class _HomePageState extends  State<HomePage>{
                           pagination: SwiperPagination(),//指示器
                         ),
                       ),
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(7, 4, 7, 4),
+                        child: LocalNav(localNavList: localNavList),
+                      ),
                       Container(
                         height: 800,
                         child: ListTile(
-                          title: Text('哈哈哈'),
+                          title: Text('resultString'),
                         ),
                       )
                     ],
@@ -95,33 +140,3 @@ class _HomePageState extends  State<HomePage>{
   }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
