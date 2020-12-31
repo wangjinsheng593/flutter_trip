@@ -2,12 +2,15 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 
+const CATCH_URLS = ['m.ctrip.com/', 'm.ctrip.com/html5/', 'm.ctrip.com/html5'];
+
 class WebView extends StatefulWidget {
   final String url;
   final String statusBarColor;
   final String title;
   final bool hideAppBar;
   final bool backForbid;
+
 
    WebView({this.url, this.statusBarColor, this.title, this.hideAppBar, this.backForbid = false});
 
@@ -20,6 +23,7 @@ class _WebViewState extends State<WebView> {
   StreamSubscription<String> _onUrlChanged;
   StreamSubscription<WebViewStateChanged> _onStateChanged;
   StreamSubscription<WebViewHttpError>  _onHttpError;
+  bool exiting = false;
 
   @override
   void initState() {
@@ -34,6 +38,18 @@ class _WebViewState extends State<WebView> {
     _onStateChanged = webviewReference.onStateChanged.listen((WebViewStateChanged state) {
       switch(state.type){
         case WebViewState.startLoad:
+          if(_isToMain(state.url) && !exiting){
+            //禁止返回
+            if(widget.backForbid){
+              //重新加载当前页面
+              webviewReference.launch(widget.url);
+            }else{
+              //返回上页
+              Navigator.pop(context);
+              exiting = true;
+            }
+
+          }
           break;
         default:
           break;
@@ -43,6 +59,18 @@ class _WebViewState extends State<WebView> {
     _onHttpError = webviewReference.onHttpError.listen((WebViewHttpError error) {
       print(error);
     });
+  }
+  _isToMain(String url){
+    bool contain = false;
+    for(final value in CATCH_URLS){
+      //url?判断url是否为空，如果为空则不调用后面的方法
+      //true??false，类似三元表达式，为true则使用前面的值，不然就使用后面的值
+      if(url?.endsWith(value) ?? false){
+        contain = true;
+        break;
+      }
+    }
+    return contain;
   }
 
   @override
@@ -69,7 +97,10 @@ class _WebViewState extends State<WebView> {
       body: Column(
         children: <Widget>[
           //将字符串的颜色转换
-          _appBar(Color(int.parse('0xff'+statusBarColorStr)),null), //TODO
+          _appBar(
+              Color(int.parse('0xff'+statusBarColorStr)),
+              backButtonColor
+          ),
           //撑满一行
           Expanded(
               child: WebviewScaffold(
