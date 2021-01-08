@@ -17,7 +17,7 @@ class SalesBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+         color: Colors.white,
       ),
       child:_items(context),
     );
@@ -27,7 +27,7 @@ class SalesBox extends StatelessWidget {
     if (salesBox == null) return null;
     List<Widget> items = [];
     items.add(_doubleItem(context,salesBox.bigCard1,salesBox.bigCard2,true,false));
-    items.add(_doubleItem(context,salesBox.smallCard1,salesBox.smallCard2,true,false));
+    items.add(_doubleItem(context,salesBox.smallCard1,salesBox.smallCard2,false,false));
     items.add(_doubleItem(context,salesBox.smallCard3,salesBox.smallCard4,false,true));
 
     return Column(
@@ -73,12 +73,28 @@ class SalesBox extends StatelessWidget {
                       )
                     );
                   },
+                  child: Text(
+                      '获取更多福利 >',
+                    style: TextStyle(color: Colors.white,fontSize: 12),
+                  ),
                 ),
-              )
+              ),
 
             ],
           ),
-        )
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: items.sublist(0,1),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: items.sublist(1,2),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: items.sublist(2,3),
+        ),
       ],
     );
   }
@@ -86,46 +102,39 @@ class SalesBox extends StatelessWidget {
   Widget _doubleItem(BuildContext context, CommonModel leftCard, CommonModel rightCard,bool big,bool last){
     return Row(
       //排列方式
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        _item(context, leftCard,true,last),
-        _item(context, rightCard,false,last)
+        _item(context, leftCard,big,true,last),
+        _item(context, rightCard,big,false,last)
       ],
 
     );
   }
 
-  Widget _item(BuildContext context, CommonModel model,bool left,bool last) {
+  Widget _item(BuildContext context, CommonModel model,bool big,bool left,bool last) {
+    BorderSide borderSide = BorderSide(width: 0.8,color: Color(0xfff2f2f2));
     //平分布局的大小
-    return Expanded(
-        flex: 1,
-        child: GestureDetector(
+    return  GestureDetector(
           onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context)=>
-                    WebView(url: model.url,statusBarColor: model.statusBarColor,
-                      hideAppBar: model.hideAppBar,
-                    )
-                )
-            );
+
           },
-          child: Column(
-            children: <Widget>[
-              Image.network(
-                model.icon,
-                width: 18,
-                height: 18,
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 3),
-                child: Text(
-                  model.title,
-                  style: TextStyle(fontSize: 12),
-                ),
+          child:Container(
+            decoration: BoxDecoration(
+              border: Border(
+                right: left?borderSide:BorderSide.none,
+                bottom: last?BorderSide.none:borderSide,
               )
-            ],
+            ),
+            child:Image.network(
+              model.icon,
+              fit: BoxFit.fill,
+              //获取当前手机屏幕的宽度, 因为padding是5，所以需要减去
+              width: MediaQuery.of(context).size.width/2-10,
+              height: big?129:80,
+            ),
           ),
-        ),
     );
   }
 }
+
+

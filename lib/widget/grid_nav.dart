@@ -140,9 +140,5 @@ class GridNav extends StatelessWidget {
     );
 
   }
-
-
-
-
 }
 
