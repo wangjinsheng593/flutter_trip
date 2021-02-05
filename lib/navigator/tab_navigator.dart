@@ -26,10 +26,11 @@ class _TabNavigatorState extends State<TabNavigator> {
           controller: _controller,
           children: <Widget>[
             HomePage(),
-            SearchPage(),
+            SearchPage(hideLeft: true),
             TravelPage(),
             MyPage(),
           ],
+          physics: NeverScrollableScrollPhysics(),//禁止页面的滑动
         ),
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: _currentIndex,
